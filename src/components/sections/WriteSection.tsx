@@ -60,6 +60,10 @@ export default function WriteSection({ sentences, goals }: WriteSectionProps) {
         </div>
       )}
 
+      {current.translation && (
+        <p className="mb-4 text-slate-500 italic">{current.translation}</p>
+      )}
+
       {/* Keyed so each sentence starts from a fresh scramble. */}
       <SentenceBuilder
         key={currentIndex}

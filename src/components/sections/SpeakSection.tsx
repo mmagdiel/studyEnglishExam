@@ -109,6 +109,15 @@ export default function SpeakSection({ sentences }: SpeakSectionProps) {
           Target Sentence
         </p>
         <p className="text-2xl font-medium text-slate-800">"{target.text}"</p>
+        {target.translation && (
+          <p className="mt-2 text-slate-500 italic">{target.translation}</p>
+        )}
+        {target.phoneticFocus && (
+          <p className="mt-3 text-sm text-indigo-700 bg-indigo-50 inline-block px-3 py-1 rounded-lg">
+            {target.phoneticFocus}
+          </p>
+        )}
+        <br />
         <button
           type="button"
           onClick={() => speakText(target.text)}

@@ -86,6 +86,12 @@ export default function ReadSection({ questions }: ReadSectionProps) {
         })}
       </div>
 
+      {hasAnswered && currentQ.explanation && (
+        <p className="mt-6 p-4 rounded-xl bg-indigo-50 text-indigo-900 text-sm animate-fade-in-up">
+          {currentQ.explanation}
+        </p>
+      )}
+
       {hasAnswered && (
         <div className="mt-8 flex justify-center animate-fade-in-up">
           <button

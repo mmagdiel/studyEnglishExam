@@ -20,24 +20,34 @@ export interface CommunicativeGoal<TGoalId extends string = string> {
 }
 
 /** Multiple-choice question about the intent of a sentence. */
-export interface ReadingQuestion {
+export interface ReadingQuestion<TGoalId extends string = string> {
   readonly sentence: string;
   readonly question: string;
   readonly options: readonly string[];
   /** Index into `options`. */
   readonly correctIndex: number;
+  /** Shown after the learner answers. */
+  readonly explanation?: string;
+  readonly goalId?: TGoalId;
 }
 
 /** Sentence used for listening + shadowing practice. */
 export interface SpeakingSentence<TGoalId extends string = string> {
   readonly text: string;
   readonly goalId?: TGoalId;
+  /** Spanish translation. */
+  readonly translation?: string;
+  /** Pronunciation tip (linking, stress, contractions…). */
+  readonly phoneticFocus?: string;
 }
 
 /** Sentence the learner rebuilds from shuffled words. */
 export interface WritingSentence<TGoalId extends string = string> {
+  /** Scrambled by splitting on spaces, so punctuation stays attached to words. */
   readonly text: string;
   readonly goalId: TGoalId;
+  /** Spanish translation, shown as a hint. */
+  readonly translation?: string;
 }
 
 export interface GrammarTopic<TGoalId extends string = string> {
@@ -46,7 +56,18 @@ export interface GrammarTopic<TGoalId extends string = string> {
   readonly title: string;
   readonly subtitle: string;
   readonly goals: readonly CommunicativeGoal<TGoalId>[];
-  readonly reading: readonly ReadingQuestion[];
+  readonly reading: readonly ReadingQuestion<TGoalId>[];
   readonly speaking: readonly SpeakingSentence<TGoalId>[];
   readonly writing: readonly WritingSentence<TGoalId>[];
+}
+
+/**
+ * Extra exercises for an existing topic, kept in their own file.
+ * Goal ids are checked against the base topic's goals.
+ */
+export interface TopicPack<TGoalId extends string = string> {
+  readonly topicId: string;
+  readonly reading?: readonly ReadingQuestion<TGoalId>[];
+  readonly speaking?: readonly SpeakingSentence<TGoalId>[];
+  readonly writing?: readonly WritingSentence<TGoalId>[];
 }
