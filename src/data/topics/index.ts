@@ -7,6 +7,14 @@ import { prepositions } from "./prepositions";
 import { prepositionsStructures } from "./prepositions-structures";
 import { adjectives } from "./adjectives";
 import { adjectivesStructures } from "./adjectives-structures";
+import { adverbs } from "./adverbs";
+import { adverbsStructures } from "./adverbs-structures";
+import { linkingAdverbials } from "./linking-adverbials";
+import { linkingAdverbialsStructures } from "./linking-adverbials-structures";
+import { presentSimpleContinuous } from "./present-simple-continuous";
+import { presentSimpleContinuousStructures } from "./present-simple-continuous-structures";
+import { pastSimpleContinuous } from "./past-simple-continuous";
+import { pastSimpleContinuousStructures } from "./past-simple-continuous-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -15,12 +23,24 @@ import { adjectivesStructures } from "./adjectives-structures";
  * - More exercises for an existing topic: create a file with
  *   `defineTopicPack(baseTopic, {...})` and add it to `packs`.
  */
-const baseTopics: readonly GrammarTopic[] = [modalWould, prepositions, adjectives];
+const baseTopics: readonly GrammarTopic[] = [
+  modalWould,
+  prepositions,
+  adjectives,
+  adverbs,
+  linkingAdverbials,
+  presentSimpleContinuous,
+  pastSimpleContinuous,
+];
 const packs = [
   modalWould2,
   modalWouldStructures,
   prepositionsStructures,
   adjectivesStructures,
+  adverbsStructures,
+  linkingAdverbialsStructures,
+  presentSimpleContinuousStructures,
+  pastSimpleContinuousStructures,
 ];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
