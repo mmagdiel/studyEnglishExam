@@ -15,6 +15,14 @@ import { presentSimpleContinuous } from "./present-simple-continuous";
 import { presentSimpleContinuousStructures } from "./present-simple-continuous-structures";
 import { pastSimpleContinuous } from "./past-simple-continuous";
 import { pastSimpleContinuousStructures } from "./past-simple-continuous-structures";
+import { presentPerfect } from "./present-perfect";
+import { presentPerfectStructures } from "./present-perfect-structures";
+import { presentPerfectContinuous } from "./present-perfect-continuous";
+import { presentPerfectContinuousStructures } from "./present-perfect-continuous-structures";
+import { pastPerfect } from "./past-perfect";
+import { pastPerfectStructures } from "./past-perfect-structures";
+import { futureForms } from "./future-forms";
+import { futureFormsStructures } from "./future-forms-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -31,6 +39,10 @@ const baseTopics: readonly GrammarTopic[] = [
   linkingAdverbials,
   presentSimpleContinuous,
   pastSimpleContinuous,
+  presentPerfect,
+  presentPerfectContinuous,
+  pastPerfect,
+  futureForms,
 ];
 const packs = [
   modalWould2,
@@ -41,6 +53,10 @@ const packs = [
   linkingAdverbialsStructures,
   presentSimpleContinuousStructures,
   pastSimpleContinuousStructures,
+  presentPerfectStructures,
+  presentPerfectContinuousStructures,
+  pastPerfectStructures,
+  futureFormsStructures,
 ];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
