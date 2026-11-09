@@ -23,6 +23,18 @@ import { pastPerfect } from "./past-perfect";
 import { pastPerfectStructures } from "./past-perfect-structures";
 import { futureForms } from "./future-forms";
 import { futureFormsStructures } from "./future-forms-structures";
+import { futurePerfectContinuous } from "./future-perfect-continuous";
+import { futurePerfectContinuousStructures } from "./future-perfect-continuous-structures";
+import { usedTo } from "./used-to";
+import { usedToStructures } from "./used-to-structures";
+import { modalVerbs1 } from "./modal-verbs-1";
+import { modalVerbs1Structures } from "./modal-verbs-1-structures";
+import { modalVerbs2 } from "./modal-verbs-2";
+import { modalVerbs2Structures } from "./modal-verbs-2-structures";
+import { modalVerbs3 } from "./modal-verbs-3";
+import { modalVerbs3Structures } from "./modal-verbs-3-structures";
+import { tagQuestions } from "./tag-questions";
+import { tagQuestionsStructures } from "./tag-questions-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -43,6 +55,12 @@ const baseTopics: readonly GrammarTopic[] = [
   presentPerfectContinuous,
   pastPerfect,
   futureForms,
+  futurePerfectContinuous,
+  usedTo,
+  modalVerbs1,
+  modalVerbs2,
+  modalVerbs3,
+  tagQuestions,
 ];
 const packs = [
   modalWould2,
@@ -57,6 +75,12 @@ const packs = [
   presentPerfectContinuousStructures,
   pastPerfectStructures,
   futureFormsStructures,
+  futurePerfectContinuousStructures,
+  usedToStructures,
+  modalVerbs1Structures,
+  modalVerbs2Structures,
+  modalVerbs3Structures,
+  tagQuestionsStructures,
 ];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
