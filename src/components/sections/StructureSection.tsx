@@ -44,10 +44,20 @@ export default function StructureSection({
 interface StructureAnalysisProps {
   exercise: StructureExercise;
   goals: readonly CommunicativeGoal[];
+  /** Called once, after step 2; correct only if both steps are right. */
+  onComplete?: (correct: boolean) => void;
   onNext: () => void;
+  nextLabel?: string;
 }
 
-function StructureAnalysis({ exercise, goals, onNext }: StructureAnalysisProps) {
+/** Two-step form + purpose analysis. Used by practice and by the test. */
+export function StructureAnalysis({
+  exercise,
+  goals,
+  onComplete,
+  onNext,
+  nextLabel = "Next Sentence",
+}: StructureAnalysisProps) {
   const [formOptions] = useState(() =>
     shuffleArray([exercise.structure, ...exercise.distractors]),
   );
@@ -57,6 +67,14 @@ function StructureAnalysis({ exercise, goals, onNext }: StructureAnalysisProps) 
   const formDone = formAnswer !== null;
   const goalDone = goalAnswer !== null;
   const correctGoal = goals.find((g) => g.id === exercise.goalId);
+
+  const answerGoal = (value: string) => {
+    if (goalDone) return;
+    setGoalAnswer(value);
+    onComplete?.(
+      formAnswer === exercise.structure && value === exercise.goalId,
+    );
+  };
 
   return (
     <>
@@ -101,7 +119,7 @@ function StructureAnalysis({ exercise, goals, onNext }: StructureAnalysisProps) 
             }))}
             correct={exercise.goalId}
             answer={goalAnswer}
-            onAnswer={setGoalAnswer}
+            onAnswer={answerGoal}
           />
         </div>
       )}
@@ -126,7 +144,7 @@ function StructureAnalysis({ exercise, goals, onNext }: StructureAnalysisProps) 
             onClick={onNext}
             className="flex items-center px-8 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md transition-all active:scale-95"
           >
-            Next Sentence <ChevronRight size={20} className="ml-2" />
+            {nextLabel} <ChevronRight size={20} className="ml-2" />
           </button>
         </div>
       )}

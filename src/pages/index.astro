@@ -2,6 +2,8 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AppHeader from "../components/AppHeader.astro";
 import { topics } from "../data/topics";
+import { BookCheck } from "lucide-react";
+
 
 const exerciseCount = (t: (typeof topics)[number]) =>
 	t.reading.length + t.structures.length + t.speaking.length + t.writing.length;
@@ -10,7 +12,8 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 <BaseLayout title="Grammar Master">
 	<AppHeader subtitle="Choose a grammar topic to practice" />
 
-	<main class="mx-auto max-w-md px-4 pb-16 sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
+	<!-- Extra bottom padding so the floating Test button never covers the last card. -->
+	<main class="mx-auto max-w-md px-4 pb-32 sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
 		{
 			topics.length === 0 ? (
 				<p class="py-16 text-center text-slate-500">No topics available.</p>
@@ -45,4 +48,29 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 			)
 		}
 	</main>
+
+	<a
+		href="/test"
+		class="fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-20 flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-indigo-300 transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+	>
+		<BookCheck />
+		<span
+			id="test-score"
+			hidden
+			class="rounded-full bg-white/20 px-2.5 py-0.5 text-sm font-semibold"
+			title="Tests passed"></span>
+	</a>
 </BaseLayout>
+
+<script>
+	import { loadTestStats } from "../lib/test";
+
+	// The score lives in this browser's storage, so it's filled in on the client.
+	const badge = document.getElementById("test-score");
+	const { passed } = loadTestStats();
+	if (badge && passed > 0) {
+		badge.textContent = `★ ${passed}`;
+		badge.setAttribute("aria-label", `${passed} tests passed`);
+		badge.hidden = false;
+	}
+</script>

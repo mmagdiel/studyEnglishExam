@@ -15,7 +15,8 @@ interface WordToken {
   word: string;
 }
 
-type Status = "idle" | "correct" | "incorrect";
+/** "revealed" = wrong answer in single-attempt mode: the solution is shown and the builder locks. */
+type Status = "idle" | "correct" | "incorrect" | "revealed";
 
 const MAX_SHUFFLE_ATTEMPTS = 10;
 
@@ -76,25 +77,39 @@ export default function WriteSection({ sentences, goals }: WriteSectionProps) {
 
 interface SentenceBuilderProps {
   text: string;
+  /** Test mode: the first wrong check reveals the answer instead of allowing retries. */
+  singleAttempt?: boolean;
+  /** Called once, when the sentence is solved or (single-attempt) revealed. */
+  onComplete?: (correct: boolean) => void;
   onNext: () => void;
+  nextLabel?: string;
 }
 
-function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
+/** Rebuild a sentence from shuffled words. Used by practice and by the test. */
+export function SentenceBuilder({
+  text,
+  singleAttempt = false,
+  onComplete,
+  onNext,
+  nextLabel = "Next Sentence",
+}: SentenceBuilderProps) {
   const [availableWords, setAvailableWords] = useState<WordToken[]>(() =>
     scramble(text),
   );
   const [selectedWords, setSelectedWords] = useState<WordToken[]>([]);
   const [status, setStatus] = useState<Status>("idle");
 
+  const locked = status === "correct" || status === "revealed";
+
   const handleSelectWord = (token: WordToken) => {
-    if (status === "correct") return;
+    if (locked) return;
     setAvailableWords((prev) => prev.filter((w) => w.id !== token.id));
     setSelectedWords((prev) => [...prev, token]);
     setStatus("idle");
   };
 
   const handleDeselectWord = (token: WordToken) => {
-    if (status === "correct") return;
+    if (locked) return;
     setSelectedWords((prev) => prev.filter((w) => w.id !== token.id));
     setAvailableWords((prev) => [...prev, token]);
     setStatus("idle");
@@ -104,7 +119,11 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
     const attempt = selectedWords.map((w) => w.word).join(" ");
     if (attempt === text) {
       setStatus("correct");
+      onComplete?.(true);
       setTimeout(() => speakText(text), 300);
+    } else if (singleAttempt) {
+      setStatus("revealed");
+      onComplete?.(false);
     } else {
       setStatus("incorrect");
     }
@@ -122,7 +141,7 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
         className={`min-h-[120px] p-6 rounded-2xl border-2 border-dashed flex flex-wrap gap-2 items-center justify-center mb-8 transition-colors ${
           status === "correct"
             ? "border-green-400 bg-green-50"
-            : status === "incorrect"
+            : status === "incorrect" || status === "revealed"
               ? "border-red-400 bg-red-50"
               : "border-slate-300 bg-slate-50"
         }`}
@@ -140,7 +159,7 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
             className={`px-4 py-2 text-lg font-medium rounded-xl shadow-sm transition-transform transform active:scale-95 ${
               status === "correct"
                 ? "bg-green-500 text-white"
-                : status === "incorrect"
+                : status === "incorrect" || status === "revealed"
                   ? "bg-red-500 text-white"
                   : "bg-indigo-600 text-white hover:bg-indigo-500"
             }`}
@@ -162,6 +181,14 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
           <span className="font-bold text-lg">Not quite right, try again.</span>
         </div>
       )}
+      {status === "revealed" && (
+        <div className="mb-6 p-4 rounded-xl bg-indigo-50 text-indigo-900 text-center animate-fade-in-up">
+          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-500 mb-1">
+            Correct sentence
+          </p>
+          <p className="text-lg font-medium">{text}</p>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-3 justify-center mb-10 min-h-[80px]">
         {availableWords.map((item) => (
@@ -180,13 +207,13 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
         <button
           type="button"
           onClick={clearSelection}
-          disabled={selectedWords.length === 0 || status === "correct"}
+          disabled={selectedWords.length === 0 || locked}
           className="flex items-center px-6 py-3 rounded-xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <RefreshCw size={20} className="mr-2" /> Clear
         </button>
 
-        {status !== "correct" ? (
+        {!locked ? (
           <button
             type="button"
             onClick={checkAnswer}
@@ -199,9 +226,13 @@ function SentenceBuilder({ text, onNext }: SentenceBuilderProps) {
           <button
             type="button"
             onClick={onNext}
-            className="flex items-center px-8 py-3 rounded-xl font-bold text-white bg-green-500 hover:bg-green-400 shadow-md shadow-green-200 transition-all transform active:scale-95 animate-pulse"
+            className={`flex items-center px-8 py-3 rounded-xl font-bold text-white shadow-md transition-all transform active:scale-95 ${
+              status === "correct"
+                ? "bg-green-500 hover:bg-green-400 shadow-green-200 animate-pulse"
+                : "bg-indigo-600 hover:bg-indigo-500"
+            }`}
           >
-            Next Sentence <ChevronRight size={20} className="ml-2" />
+            {nextLabel} <ChevronRight size={20} className="ml-2" />
           </button>
         )}
       </div>

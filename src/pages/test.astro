@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AppHeader from "../components/AppHeader.astro";
+import TestRunner from "../components/TestRunner";
+---
+
+<BaseLayout title="Test · Grammar Master">
+	<AppHeader subtitle="Test" backHref="/" />
+	<!-- client:only: random picks, localStorage and Web Speech only exist in the browser. -->
+	<TestRunner client:only="react" />
+</BaseLayout>

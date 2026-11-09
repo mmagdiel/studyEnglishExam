@@ -10,22 +10,9 @@ interface ReadSectionProps {
 
 export default function ReadSection({ questions }: ReadSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   const currentQ = questions[currentIndex];
   if (!currentQ) return <EmptyState skill="reading" />;
-
-  const hasAnswered = selectedOption !== null;
-
-  const handleOptionClick = (index: number) => {
-    if (hasAnswered) return;
-    setSelectedOption(index);
-  };
-
-  const nextQuestion = () => {
-    setSelectedOption(null);
-    setCurrentIndex((prev) => (prev + 1) % questions.length);
-  };
 
   return (
     <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-200">
@@ -38,14 +25,50 @@ export default function ReadSection({ questions }: ReadSectionProps) {
         </span>
       </div>
 
+      {/* Keyed so the selected answer resets per question. */}
+      <ReadingExercise
+        key={currentIndex}
+        question={currentQ}
+        onNext={() => setCurrentIndex((prev) => (prev + 1) % questions.length)}
+      />
+    </div>
+  );
+}
+
+interface ReadingExerciseProps {
+  question: ReadingQuestion;
+  /** Called once, when the learner picks an option. */
+  onComplete?: (correct: boolean) => void;
+  onNext: () => void;
+  nextLabel?: string;
+}
+
+/** One multiple-choice reading question. Used by practice and by the test. */
+export function ReadingExercise({
+  question,
+  onComplete,
+  onNext,
+  nextLabel = "Next Question",
+}: ReadingExerciseProps) {
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const hasAnswered = selectedOption !== null;
+
+  const handleOptionClick = (index: number) => {
+    if (hasAnswered) return;
+    setSelectedOption(index);
+    onComplete?.(index === question.correctIndex);
+  };
+
+  return (
+    <>
       <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-8">
         <p className="text-xl font-medium text-slate-800 text-center mb-2">
-          "{currentQ.sentence}"
+          "{question.sentence}"
         </p>
         <button
           type="button"
           aria-label="Listen to sentence"
-          onClick={() => speakText(currentQ.sentence)}
+          onClick={() => speakText(question.sentence)}
           className="mx-auto block text-indigo-500 hover:text-indigo-700 mt-2"
         >
           <Volume2 size={20} />
@@ -53,18 +76,18 @@ export default function ReadSection({ questions }: ReadSectionProps) {
       </div>
 
       <p className="text-lg font-semibold text-slate-700 mb-4">
-        {currentQ.question}
+        {question.question}
       </p>
 
       <div className="space-y-3">
-        {currentQ.options.map((opt, i) => {
+        {question.options.map((opt, i) => {
           let btnClass =
             "w-full text-left px-6 py-4 rounded-xl border-2 transition-all font-medium text-slate-700 ";
 
           if (!hasAnswered) {
             btnClass +=
               "border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 active:scale-95";
-          } else if (i === currentQ.correctIndex) {
+          } else if (i === question.correctIndex) {
             btnClass += "border-green-500 bg-green-50 text-green-800";
           } else if (i === selectedOption) {
             btnClass += "border-red-500 bg-red-50 text-red-800";
@@ -86,9 +109,9 @@ export default function ReadSection({ questions }: ReadSectionProps) {
         })}
       </div>
 
-      {hasAnswered && currentQ.explanation && (
+      {hasAnswered && question.explanation && (
         <p className="mt-6 p-4 rounded-xl bg-indigo-50 text-indigo-900 text-sm animate-fade-in-up">
-          {currentQ.explanation}
+          {question.explanation}
         </p>
       )}
 
@@ -96,13 +119,13 @@ export default function ReadSection({ questions }: ReadSectionProps) {
         <div className="mt-8 flex justify-center animate-fade-in-up">
           <button
             type="button"
-            onClick={nextQuestion}
+            onClick={onNext}
             className="flex items-center px-8 py-3 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md transition-all active:scale-95"
           >
-            Next Question <ChevronRight size={20} className="ml-2" />
+            {nextLabel} <ChevronRight size={20} className="ml-2" />
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }

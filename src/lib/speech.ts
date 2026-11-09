@@ -47,6 +47,11 @@ interface SpeechRecognitionWindow {
   webkitSpeechRecognition?: SpeechRecognitionConstructor;
 }
 
+export function isSpeechRecognitionSupported(): boolean {
+  const w = window as unknown as SpeechRecognitionWindow;
+  return Boolean(w.SpeechRecognition ?? w.webkitSpeechRecognition);
+}
+
 /** Returns a configured recognizer, or `null` if the browser lacks support. */
 export function createSpeechRecognition(): SpeechRecognitionInstance | null {
   const w = window as unknown as SpeechRecognitionWindow;
