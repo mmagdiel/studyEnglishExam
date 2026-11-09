@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AppHeader from "../components/AppHeader.astro";
+---
+
+<BaseLayout title="Page not found · Grammar Master">
+	<AppHeader subtitle="Page not found" backHref="/" />
+	<main class="mx-auto max-w-md px-4 py-16 text-center">
+		<p class="mb-6 text-slate-500">This page doesn't exist.</p>
+		<a
+			href="/"
+			class="inline-block rounded-xl bg-indigo-600 px-8 py-3 font-bold text-white shadow-md transition hover:bg-indigo-500"
+		>
+			Back to topics
+		</a>
+	</main>
+</BaseLayout>

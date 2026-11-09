@@ -41,3 +41,22 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## 🚢 Deploying to Coolify
+
+The site is fully static. The `Dockerfile` builds it with Node (`npm run build`) and serves `dist/` with nginx (`nginx.conf`).
+
+1. In Coolify: **New Resource → Public/Private Repository**, pick this repo and branch.
+2. **Build Pack:** `Dockerfile` (Base Directory `/`, Dockerfile location `/Dockerfile`).
+3. **Ports Exposes:** `80`.
+4. Add a domain with `https://`. HTTPS is required: browsers only allow the microphone (Speak exercises) on secure pages.
+5. Deploy. No environment variables are needed.
+
+Test it locally with Docker:
+
+```sh
+docker build -t grammar-master .
+docker run --rm -p 8080:80 grammar-master   # → http://localhost:8080
+```
+
+Test scores are saved in each visitor's browser (localStorage), so redeploying doesn't reset them.
