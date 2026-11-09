@@ -35,6 +35,14 @@ import { modalVerbs3 } from "./modal-verbs-3";
 import { modalVerbs3Structures } from "./modal-verbs-3-structures";
 import { tagQuestions } from "./tag-questions";
 import { tagQuestionsStructures } from "./tag-questions-structures";
+import { emphaticDoObjectQuestions } from "./emphatic-do-object-questions";
+import { emphaticDoObjectQuestionsStructures } from "./emphatic-do-object-questions-structures";
+import { auxiliaryShortExpressions } from "./auxiliary-short-expressions";
+import { auxiliaryShortExpressionsStructures } from "./auxiliary-short-expressions-structures";
+import { passiveVoice } from "./passive-voice";
+import { passiveVoiceStructures } from "./passive-voice-structures";
+import { relativeClauses } from "./relative-clauses";
+import { relativeClausesStructures } from "./relative-clauses-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -61,6 +69,10 @@ const baseTopics: readonly GrammarTopic[] = [
   modalVerbs2,
   modalVerbs3,
   tagQuestions,
+  emphaticDoObjectQuestions,
+  auxiliaryShortExpressions,
+  passiveVoice,
+  relativeClauses,
 ];
 const packs = [
   modalWould2,
@@ -81,6 +93,10 @@ const packs = [
   modalVerbs2Structures,
   modalVerbs3Structures,
   tagQuestionsStructures,
+  emphaticDoObjectQuestionsStructures,
+  auxiliaryShortExpressionsStructures,
+  passiveVoiceStructures,
+  relativeClausesStructures,
 ];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
