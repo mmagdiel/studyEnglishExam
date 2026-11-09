@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import AppHeader from "../components/AppHeader.astro";
 import { topics } from "../data/topics";
-import { BookCheck } from "lucide-react";
+import { BookCheck, Download, Share } from "lucide-react";
 
 
 const exerciseCount = (t: (typeof topics)[number]) =>
@@ -14,6 +14,34 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 
 	<!-- Extra bottom padding so the floating Test button never covers the last card. -->
 	<main class="mx-auto max-w-md px-4 pb-32 sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
+		<!-- Shown only when this browser can install the app and it isn't installed yet. -->
+		<section
+			id="install-card"
+			hidden
+			class="mb-6 rounded-3xl border border-indigo-200 bg-indigo-50 p-5"
+		>
+			<div class="flex items-center gap-4">
+				<img src="/icons/icon-192.png" alt="" width="48" height="48" class="rounded-xl" />
+				<div class="min-w-0 flex-1">
+					<h2 class="font-bold text-slate-800">Install Grammar Master</h2>
+					<p class="text-sm text-slate-600">Open it from your home screen like an app, even offline.</p>
+				</div>
+				<button
+					id="install-button"
+					type="button"
+					class="flex shrink-0 items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 font-bold text-white shadow-md transition hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+				>
+					<Download className="size-5" />
+					Install
+				</button>
+			</div>
+			<p id="install-ios-help" hidden class="mt-4 rounded-2xl bg-white p-4 text-sm text-slate-700">
+				On iPhone or iPad: tap
+				<Share className="mx-0.5 inline size-4 align-text-bottom text-indigo-600" aria-label="Share" />
+				<strong>Share</strong> in the browser bar, then choose <strong>Add to Home Screen</strong>.
+			</p>
+		</section>
+
 		{
 			topics.length === 0 ? (
 				<p class="py-16 text-center text-slate-500">No topics available.</p>
@@ -64,6 +92,9 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 
 <script>
 	import { loadTestStats } from "../lib/test";
+	import { setupInstallCard } from "../lib/install";
+
+	setupInstallCard();
 
 	// The score lives in this browser's storage, so it's filled in on the client.
 	const badge = document.getElementById("test-score");

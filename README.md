@@ -60,3 +60,13 @@ docker run --rm -p 8080:80 grammar-master   # → http://localhost:8080
 ```
 
 Test scores are saved in each visitor's browser (localStorage), so redeploying doesn't reset them.
+
+## 📲 Installing as an app (PWA)
+
+The home page shows an **Install** card when the browser can install the site:
+
+- **Chrome / Edge / Android:** the button opens the browser's install dialog.
+- **iPhone / iPad (Safari):** the button explains *Share → Add to Home Screen*.
+- The card hides itself once the app is installed.
+
+Pieces involved: `public/manifest.webmanifest`, `public/icons/`, and `integrations/pwa.mjs`, which writes `dist/sw.js` after each build. That service worker precaches every page and asset, so the installed app also works offline. Each deploy gets a new cache name, and pages are fetched from the network first, so updates appear on the next visit. Installation requires HTTPS (or `localhost`). The service worker is only registered in production builds (`npm run build && npm run preview`), not in `npm run dev`.
