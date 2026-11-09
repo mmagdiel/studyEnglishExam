@@ -2,6 +2,7 @@ import type { GrammarTopic } from "../../types/grammar";
 import { mergePacks } from "./defineTopic";
 import { modalWould } from "./modal-would";
 import { modalWould2 } from "./modal-would-2";
+import { modalWouldStructures } from "./modal-would-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -11,7 +12,7 @@ import { modalWould2 } from "./modal-would-2";
  *   `defineTopicPack(baseTopic, {...})` and add it to `packs`.
  */
 const baseTopics: readonly GrammarTopic[] = [modalWould];
-const packs = [modalWould2];
+const packs = [modalWould2, modalWouldStructures];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
 

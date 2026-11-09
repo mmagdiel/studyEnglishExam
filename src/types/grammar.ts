@@ -7,7 +7,12 @@
  * `src/data/topics/defineTopic.ts` to get that inference for free.
  */
 
-export type Skill = "reading" | "writing" | "speaking" | "listening";
+export type Skill =
+  | "reading"
+  | "writing"
+  | "speaking"
+  | "listening"
+  | "structure";
 
 /** A communicative function the grammar point serves (wish, offer, permission…). */
 export interface CommunicativeGoal<TGoalId extends string = string> {
@@ -50,6 +55,25 @@ export interface WritingSentence<TGoalId extends string = string> {
   readonly translation?: string;
 }
 
+/**
+ * Two-step analysis: identify the grammatical structure (form), then the
+ * communicative purpose it serves (function). The purpose options are the
+ * topic's goals, so the same form can be contrasted across purposes.
+ */
+export interface StructureExercise<TGoalId extends string = string> {
+  readonly sentence: string;
+  /** Exact substring of `sentence` that carries the structure; highlighted after answering. */
+  readonly highlight: string;
+  /** The correct form, e.g. "would rather + base verb + than". */
+  readonly structure: string;
+  /** Plausible but wrong forms, shown shuffled with `structure`. */
+  readonly distractors: readonly string[];
+  /** The purpose; must be one of the topic's goals. */
+  readonly goalId: TGoalId;
+  /** Shown after both steps are answered. */
+  readonly explanation?: string;
+}
+
 export interface GrammarTopic<TGoalId extends string = string> {
   /** URL-safe unique id, matches the data file name (e.g. "modal-would"). */
   readonly id: string;
@@ -59,6 +83,7 @@ export interface GrammarTopic<TGoalId extends string = string> {
   readonly reading: readonly ReadingQuestion<TGoalId>[];
   readonly speaking: readonly SpeakingSentence<TGoalId>[];
   readonly writing: readonly WritingSentence<TGoalId>[];
+  readonly structures: readonly StructureExercise<TGoalId>[];
 }
 
 /**
@@ -70,4 +95,5 @@ export interface TopicPack<TGoalId extends string = string> {
   readonly reading?: readonly ReadingQuestion<TGoalId>[];
   readonly speaking?: readonly SpeakingSentence<TGoalId>[];
   readonly writing?: readonly WritingSentence<TGoalId>[];
+  readonly structures?: readonly StructureExercise<TGoalId>[];
 }

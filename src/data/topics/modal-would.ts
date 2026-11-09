@@ -40,6 +40,17 @@ export const modalWould = defineTopic({
       ],
     },
     {
+      id: "requests",
+      title: "Requests",
+      translation: "Peticiones",
+      description:
+        "Use 'Would you + verb' or 'Would you mind + verb-ing' to politely ask someone else to do something. Unlike permission, the listener is the one who acts.",
+      examples: [
+        "Would you close the door, please?",
+        "Would you mind turning the music down?",
+      ],
+    },
+    {
       id: "preferences",
       title: "Preferences",
       translation: "Preferencias",
@@ -59,6 +70,17 @@ export const modalWould = defineTopic({
       examples: [
         "When we were kids, we would play outside until dark.",
         "My grandfather would always tell us fascinating stories.",
+      ],
+    },
+    {
+      id: "intentions",
+      title: "Intentions & Promises",
+      translation: "Intenciones y promesas",
+      description:
+        "Use 'would' as the past of 'will' to report what someone intended, promised or was willing to do.",
+      examples: [
+        "He promised he would help me move.",
+        "I told her I would be there by six.",
       ],
     },
   ],

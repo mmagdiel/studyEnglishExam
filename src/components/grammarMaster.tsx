@@ -1,16 +1,18 @@
 import { useState, type ReactNode } from "react";
-import { BookOpen, BookText, Edit3, Mic } from "lucide-react";
+import { BookOpen, BookText, Edit3, Mic, ScanSearch } from "lucide-react";
 import type { GrammarTopic } from "../types/grammar";
 import StudySection from "./sections/StudySection";
 import ReadSection from "./sections/ReadSection";
 import SpeakSection from "./sections/SpeakSection";
 import WriteSection from "./sections/WriteSection";
+import StructureSection from "./sections/StructureSection";
 
-type Tab = "study" | "read" | "speak" | "write";
+type Tab = "study" | "read" | "structures" | "speak" | "write";
 
 const TABS: readonly { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "study", label: "Study", icon: <BookOpen size={18} /> },
   { id: "read", label: "Read", icon: <BookText size={18} /> },
+  { id: "structures", label: "Structures", icon: <ScanSearch size={18} /> },
   { id: "speak", label: "Speak", icon: <Mic size={18} /> },
   { id: "write", label: "Write", icon: <Edit3 size={18} /> },
 ];
@@ -58,9 +60,12 @@ export default function GrammarMaster({
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-md mx-auto sm:max-w-2xl md:max-w-4xl lg:max-w-5xl px-4 pb-24">
-        {/* Navigation Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8 bg-white p-2 rounded-2xl sm:rounded-full shadow-sm border border-slate-100">
+      <main className="max-w-md mx-auto sm:max-w-2xl md:max-w-4xl lg:max-w-5xl px-4 pb-32 sm:pb-24">
+        {/* Navigation Tabs: fixed bottom bar on mobile (thumb reach), inline pill bar from sm up. */}
+        <nav
+          aria-label="Sections"
+          className="fixed inset-x-0 bottom-0 z-20 flex justify-around gap-1 border-t border-slate-200 bg-white/95 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] backdrop-blur sm:static sm:z-auto sm:mb-8 sm:justify-center sm:gap-2 sm:rounded-full sm:border sm:border-slate-100 sm:bg-white sm:p-2 sm:shadow-sm sm:backdrop-blur-none"
+        >
           {TABS.map((tab) => (
             <TabButton
               key={tab.id}
@@ -70,12 +75,18 @@ export default function GrammarMaster({
               label={tab.label}
             />
           ))}
-        </div>
+        </nav>
 
         {/* Keyed by topic + tab so exercise progress resets when either changes. */}
         <div key={`${topic.id}-${activeTab}`} className="animate-fade-in-up">
           {activeTab === "study" && <StudySection goals={topic.goals} />}
           {activeTab === "read" && <ReadSection questions={topic.reading} />}
+          {activeTab === "structures" && (
+            <StructureSection
+              exercises={topic.structures}
+              goals={topic.goals}
+            />
+          )}
           {activeTab === "speak" && (
             <SpeakSection sentences={topic.speaking} />
           )}
@@ -104,14 +115,16 @@ function TabButton({ active, onClick, icon, label }: TabButtonProps) {
       onClick={onClick}
       aria-label={label}
       aria-pressed={active}
-      className={`flex items-center space-x-2 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 ${
+      className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-1 py-1.5 font-semibold transition-all duration-300 sm:flex-none sm:flex-row sm:gap-2 sm:rounded-full sm:px-5 sm:py-2.5 ${
         active
-          ? "bg-indigo-600 text-white shadow-md transform scale-105"
+          ? "bg-indigo-600 text-white shadow-md sm:scale-105"
           : "bg-transparent text-slate-500 hover:bg-indigo-50 hover:text-indigo-600"
       }`}
     >
       {icon}
-      <span className="hidden sm:inline">{label}</span>
+      <span className="max-w-full truncate text-[11px] leading-none sm:text-base sm:leading-normal">
+        {label}
+      </span>
     </button>
   );
 }

@@ -3,6 +3,7 @@ import type {
   GrammarTopic,
   ReadingQuestion,
   SpeakingSentence,
+  StructureExercise,
   TopicPack,
   WritingSentence,
 } from "../../types/grammar";
@@ -20,8 +21,9 @@ export function defineTopic<const TGoalId extends string>(topic: {
   readonly reading: readonly ReadingQuestion<NoInfer<TGoalId>>[];
   readonly speaking: readonly SpeakingSentence<NoInfer<TGoalId>>[];
   readonly writing: readonly WritingSentence<NoInfer<TGoalId>>[];
+  readonly structures?: readonly StructureExercise<NoInfer<TGoalId>>[];
 }): GrammarTopic<TGoalId> {
-  return topic;
+  return { ...topic, structures: topic.structures ?? [] };
 }
 
 /**
@@ -53,6 +55,10 @@ export function mergePacks(
       reading: [...topic.reading, ...own.flatMap((p) => p.reading ?? [])],
       speaking: [...topic.speaking, ...own.flatMap((p) => p.speaking ?? [])],
       writing: [...topic.writing, ...own.flatMap((p) => p.writing ?? [])],
+      structures: [
+        ...topic.structures,
+        ...own.flatMap((p) => p.structures ?? []),
+      ],
     };
   });
 }
