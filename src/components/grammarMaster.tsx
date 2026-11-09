@@ -18,47 +18,15 @@ const TABS: readonly { id: Tab; label: string; icon: ReactNode }[] = [
 ];
 
 export interface GrammarMasterProps {
-  topics: readonly GrammarTopic[];
-  /** Topic selected on first render; defaults to the first topic. */
-  initialTopicId?: string;
+  /** The topic being practiced; the page header (title, back link) lives in the Astro page. */
+  topic: GrammarTopic;
 }
 
-export default function GrammarMaster({
-  topics,
-  initialTopicId,
-}: GrammarMasterProps) {
+export default function GrammarMaster({ topic }: GrammarMasterProps) {
   const [activeTab, setActiveTab] = useState<Tab>("study");
-  const [activeTopicId, setActiveTopicId] = useState(
-    () => initialTopicId ?? topics[0]?.id ?? "",
-  );
-
-  const topic = topics.find((t) => t.id === activeTopicId) ?? topics[0];
-
-  if (!topic) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500">
-        No topics available.
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      {/* Header */}
-      <header className="bg-indigo-600 text-white p-6 shadow-md rounded-b-3xl mb-6 max-w-md mx-auto sm:max-w-2xl md:max-w-4xl lg:max-w-5xl flex flex-col items-center">
-        <h1 className="text-3xl font-extrabold tracking-tight mb-2">
-          Grammar Master
-        </h1>
-        <p className="text-indigo-100 font-medium">{topic.subtitle}</p>
-        {topics.length > 1 && (
-          <TopicSelector
-            topics={topics}
-            value={topic.id}
-            onChange={setActiveTopicId}
-          />
-        )}
-      </header>
-
+    <div className="font-sans text-slate-800">
       {/* Main Content Area */}
       <main className="max-w-md mx-auto sm:max-w-2xl md:max-w-4xl lg:max-w-5xl px-4 pb-32 sm:pb-24">
         {/* Navigation Tabs: fixed bottom bar on mobile (thumb reach), inline pill bar from sm up. */}
@@ -77,8 +45,8 @@ export default function GrammarMaster({
           ))}
         </nav>
 
-        {/* Keyed by topic + tab so exercise progress resets when either changes. */}
-        <div key={`${topic.id}-${activeTab}`} className="animate-fade-in-up">
+        {/* Keyed by tab so exercise progress resets when switching sections. */}
+        <div key={activeTab} className="animate-fade-in-up">
           {activeTab === "study" && <StudySection goals={topic.goals} />}
           {activeTab === "read" && <ReadSection questions={topic.reading} />}
           {activeTab === "structures" && (
@@ -126,30 +94,5 @@ function TabButton({ active, onClick, icon, label }: TabButtonProps) {
         {label}
       </span>
     </button>
-  );
-}
-
-interface TopicSelectorProps {
-  topics: readonly GrammarTopic[];
-  value: string;
-  onChange: (topicId: string) => void;
-}
-
-function TopicSelector({ topics, value, onChange }: TopicSelectorProps) {
-  return (
-    <label className="mt-4 flex items-center gap-2 text-sm text-indigo-100">
-      <span className="font-semibold">Topic</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="rounded-full bg-white/15 px-4 py-1.5 font-medium text-white outline-none focus:ring-2 focus:ring-white/60 [&>option]:text-slate-800"
-      >
-        {topics.map((t) => (
-          <option key={t.id} value={t.id}>
-            {t.title}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }

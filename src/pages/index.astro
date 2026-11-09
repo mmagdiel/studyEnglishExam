@@ -1,20 +1,48 @@
 ---
-import "../styles/global.css";
-import GrammarMaster from "../components/grammarMaster";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AppHeader from "../components/AppHeader.astro";
 import { topics } from "../data/topics";
+
+const exerciseCount = (t: (typeof topics)[number]) =>
+	t.reading.length + t.structures.length + t.speaking.length + t.writing.length;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Grammar Master</title>
-	</head>
-	<body class="bg-slate-50">
-		<!-- client:only: the app depends on Web Speech APIs that don't exist during SSR. -->
-		<GrammarMaster client:only="react" topics={topics} />
-	</body>
-</html>
+<BaseLayout title="Grammar Master">
+	<AppHeader subtitle="Choose a grammar topic to practice" />
+
+	<main class="mx-auto max-w-md px-4 pb-16 sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
+		{
+			topics.length === 0 ? (
+				<p class="py-16 text-center text-slate-500">No topics available.</p>
+			) : (
+				<ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					{topics.map((topic) => (
+						<li>
+							<a
+								href={`/topics/${topic.id}`}
+								class="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+							>
+								<h2 class="text-xl font-bold text-slate-800 group-hover:text-indigo-600">
+									{topic.title}
+								</h2>
+								<p class="mt-1 text-sm text-slate-500">
+									{topic.goals.length} goals · {exerciseCount(topic)} exercises
+								</p>
+								<ul class="mt-4 flex flex-wrap gap-2">
+									{topic.goals.map((goal) => (
+										<li class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+											{goal.title}
+										</li>
+									))}
+								</ul>
+								<span class="mt-auto pt-5 text-sm font-semibold text-indigo-600">
+									Start practicing <span aria-hidden="true">→</span>
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			)
+		}
+	</main>
+</BaseLayout>

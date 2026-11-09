@@ -3,6 +3,10 @@ import { mergePacks } from "./defineTopic";
 import { modalWould } from "./modal-would";
 import { modalWould2 } from "./modal-would-2";
 import { modalWouldStructures } from "./modal-would-structures";
+import { prepositions } from "./prepositions";
+import { prepositionsStructures } from "./prepositions-structures";
+import { adjectives } from "./adjectives";
+import { adjectivesStructures } from "./adjectives-structures";
 
 /**
  * Registry of all topics, in display order.
@@ -11,8 +15,13 @@ import { modalWouldStructures } from "./modal-would-structures";
  * - More exercises for an existing topic: create a file with
  *   `defineTopicPack(baseTopic, {...})` and add it to `packs`.
  */
-const baseTopics: readonly GrammarTopic[] = [modalWould];
-const packs = [modalWould2, modalWouldStructures];
+const baseTopics: readonly GrammarTopic[] = [modalWould, prepositions, adjectives];
+const packs = [
+  modalWould2,
+  modalWouldStructures,
+  prepositionsStructures,
+  adjectivesStructures,
+];
 
 export const topics: readonly GrammarTopic[] = mergePacks(baseTopics, packs);
 

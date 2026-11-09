@@ -1,0 +1,18 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import AppHeader from "../../components/AppHeader.astro";
+import GrammarMaster from "../../components/grammarMaster";
+import { topics } from "../../data/topics";
+
+export const getStaticPaths = (() =>
+	topics.map((topic) => ({ params: { id: topic.id }, props: { topic } }))) satisfies GetStaticPaths;
+
+const { topic } = Astro.props;
+---
+
+<BaseLayout title={`${topic.title} · Grammar Master`}>
+	<AppHeader subtitle={topic.subtitle} backHref="/" />
+	<!-- client:only: the app depends on Web Speech APIs that don't exist during SSR. -->
+	<GrammarMaster client:only="react" topic={topic} />
+</BaseLayout>

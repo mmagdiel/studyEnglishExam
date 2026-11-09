@@ -1,0 +1,26 @@
+---
+interface Props {
+	subtitle: string;
+	/** When set, shows a "back to topics" link (used inside a topic). */
+	backHref?: string;
+}
+
+const { subtitle, backHref } = Astro.props;
+---
+
+<header
+	class="relative mx-auto mb-6 flex max-w-md flex-col items-center rounded-b-3xl bg-indigo-600 p-6 text-white shadow-md sm:max-w-2xl md:max-w-4xl lg:max-w-5xl"
+>
+	{
+		backHref && (
+			<a
+				href={backHref}
+				class="mb-3 inline-flex items-center gap-1 self-start rounded-full bg-white/15 px-3 py-1 text-sm font-semibold text-indigo-50 transition hover:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/60 sm:absolute sm:left-6 sm:top-6 sm:mb-0"
+			>
+				<span aria-hidden="true">←</span> All topics
+			</a>
+		)
+	}
+	<h1 class="mb-2 text-3xl font-extrabold tracking-tight">Grammar Master</h1>
+	<p class="text-center font-medium text-indigo-100">{subtitle}</p>
+</header>
