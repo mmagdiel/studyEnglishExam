@@ -5,7 +5,7 @@ import TestRunner from "../components/TestRunner";
 ---
 
 <BaseLayout title="Test · Grammar Master">
-	<AppHeader subtitle="Test" backHref="/" />
+	<AppHeader subtitle="" backHref="/" isTitle />
 	<!-- client:only: random picks, localStorage and Web Speech only exist in the browser. -->
 	<TestRunner client:only="react" />
 </BaseLayout>

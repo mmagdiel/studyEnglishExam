@@ -1,15 +1,24 @@
 ---
+import { Trophy } from "lucide-react";
+
 interface Props {
 	subtitle: string;
 	/** When set, shows a "back to topics" link (used inside a topic). */
 	backHref?: string;
+	isTitle?: boolean
 }
 
-const { subtitle, backHref } = Astro.props;
+const { subtitle, backHref, isTitle = false } = Astro.props;
+const width = "max-w-md sm:max-w-2xl md:max-w-4xl lg:max-w-5xl";
 ---
 
 <header
-	class="relative mx-auto mb-6 flex max-w-md flex-col items-center rounded-b-3xl bg-indigo-600 p-6 text-white shadow-md sm:max-w-2xl md:max-w-4xl lg:max-w-5xl"
+	class:list={[
+		"relative mx-auto mb-6 flex flex-col items-center rounded-b-3xl bg-indigo-600 p-6 text-white shadow-md",
+		width,
+		// Room for the score pill above the centered title on narrow screens.
+		!backHref && "pt-12 sm:pt-6",
+	]}
 >
 	{
 		backHref && (
@@ -21,6 +30,46 @@ const { subtitle, backHref } = Astro.props;
 			</a>
 		)
 	}
-	<h1 class="mb-2 text-3xl font-extrabold tracking-tight">Grammar Master</h1>
-	<p class="text-center font-medium text-indigo-100">{subtitle}</p>
+	{isTitle && <h1 class="mb-2 text-3xl font-extrabold tracking-tight">Grammar Master</h1>} 
+	<p class="mb-2 text-xl font-bold tracking-tight text-indigo-100">{subtitle}</p>
 </header>
+
+<!--
+	Passed-tests score: pinned to the header's top-right corner and kept on
+	screen while scrolling. Filled in on the client from localStorage.
+-->
+<div class="pointer-events-none fixed inset-x-0 top-0 z-30">
+	<div class:list={["relative mx-auto", width]}>
+		<a
+			href="/test"
+			id="header-score"
+			title="Tests passed"
+			aria-label="Tests passed"
+			class="pointer-events-auto absolute right-3 top-[calc(0.75rem+env(safe-area-inset-top))] flex items-center gap-1 rounded-full bg-indigo-700/90 px-2.5 py-1 text-xs font-bold text-white shadow-md ring-1 ring-white/30 backdrop-blur transition hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-white sm:right-4 sm:top-[calc(1rem+env(safe-area-inset-top))]"
+		>
+			<Trophy className="size-3.5 text-amber-300" aria-hidden="true" />
+			<span id="header-score-value">0</span>
+		</a>
+	</div>
+</div>
+
+<script>
+	import { loadTestStats, TEST_STATS_EVENT, type TestStats } from "../lib/test";
+
+	const pill = document.getElementById("header-score");
+	const value = document.getElementById("header-score-value");
+
+	const render = ({ passed }: TestStats) => {
+		if (!pill || !value) return;
+		value.textContent = String(passed);
+		const label = `${passed} ${passed === 1 ? "test" : "tests"} passed`;
+		pill.title = label;
+		pill.setAttribute("aria-label", label);
+	};
+
+	render(loadTestStats());
+	// Live update when a test is passed on this page…
+	window.addEventListener(TEST_STATS_EVENT, (e) => render((e as CustomEvent<TestStats>).detail));
+	// …or in another tab.
+	window.addEventListener("storage", () => render(loadTestStats()));
+</script>

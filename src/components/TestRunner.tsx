@@ -296,6 +296,19 @@ interface ResultsProps {
   onRestart: () => void;
 }
 
+const ordinal = (n: number) => {
+  const tens = n % 100;
+  const suffix =
+    tens >= 11 && tens <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
+  return `${n}${suffix}`;
+};
+
+/** A cheer for finishing a test, whatever the result. */
+const completedMessage = (completed: number) =>
+  completed === 1
+    ? "🎉 Your first test is done. Keep it up!"
+    : `🔥 That's your ${ordinal(completed)} test completed. Keep going!`;
+
 function Results({ passed, mistakes, reached, stats, onRestart }: ResultsProps) {
   return (
     <main className="max-w-md mx-auto sm:max-w-2xl px-4 pb-16">
@@ -317,14 +330,16 @@ function Results({ passed, mistakes, reached, stats, onRestart }: ResultsProps) 
               : `You reached exercise ${reached} of ${TEST_LENGTH}. This test doesn't count toward your score.`}
           </p>
 
+          <p className="mb-4 font-semibold text-indigo-700">{completedMessage(stats.completed)}</p>
+
           <div className="w-full grid grid-cols-2 gap-3 mb-8">
             <div className="rounded-2xl bg-indigo-50 p-4">
               <p className="text-3xl font-extrabold text-indigo-700">{stats.passed}</p>
               <p className="text-sm font-semibold text-indigo-900">Tests passed</p>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-3xl font-extrabold text-slate-700">{stats.attempted}</p>
-              <p className="text-sm font-semibold text-slate-600">Tests taken</p>
+              <p className="text-3xl font-extrabold text-slate-700">{stats.completed}</p>
+              <p className="text-sm font-semibold text-slate-600">Tests completed</p>
             </div>
           </div>
 

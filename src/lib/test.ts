@@ -47,24 +47,30 @@ export function pickItems(pool: readonly TestItem[], count: number): TestItem[] 
 
 const STATS_KEY = "grammar-master:test-stats";
 
+/** Fired on `window` after a test is recorded, so the header score updates live. */
+export const TEST_STATS_EVENT = "grammar-master:test-stats";
+
 export interface TestStats {
   /** Tests completed with hearts left — this is the overall score. */
   readonly passed: number;
-  /** All finished tests, passed or failed. */
-  readonly attempted: number;
+  /** Every finished test, passed or failed (starts at 0, +1 per test). */
+  readonly completed: number;
 }
 
-const EMPTY_STATS: TestStats = { passed: 0, attempted: 0 };
+const EMPTY_STATS: TestStats = { passed: 0, completed: 0 };
+
+const count = (value: unknown) => (Number.isFinite(value) ? Number(value) : 0);
 
 /** Reads the score from this browser. Storage can be missing or blocked, so this never throws. */
 export function loadTestStats(): TestStats {
   try {
     const raw = window.localStorage.getItem(STATS_KEY);
     if (!raw) return EMPTY_STATS;
-    const parsed = JSON.parse(raw) as Partial<TestStats>;
+    // `attempted` is the field's earlier name; keep counts saved before the rename.
+    const parsed = JSON.parse(raw) as Partial<TestStats> & { attempted?: number };
     return {
-      passed: Number.isFinite(parsed.passed) ? Number(parsed.passed) : 0,
-      attempted: Number.isFinite(parsed.attempted) ? Number(parsed.attempted) : 0,
+      passed: count(parsed.passed),
+      completed: count(parsed.completed ?? parsed.attempted),
     };
   } catch {
     return EMPTY_STATS;
@@ -76,12 +82,13 @@ export function recordTestResult(passed: boolean): TestStats {
   const prev = loadTestStats();
   const next: TestStats = {
     passed: prev.passed + (passed ? 1 : 0),
-    attempted: prev.attempted + 1,
+    completed: prev.completed + 1,
   };
   try {
     window.localStorage.setItem(STATS_KEY, JSON.stringify(next));
   } catch {
     // Storage unavailable (private mode, blocked): the score just isn't kept.
   }
+  window.dispatchEvent(new CustomEvent<TestStats>(TEST_STATS_EVENT, { detail: next }));
   return next;
 }

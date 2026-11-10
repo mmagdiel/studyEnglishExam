@@ -10,10 +10,11 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 ---
 
 <BaseLayout title="Grammar Master">
-	<AppHeader subtitle="Choose a grammar topic to practice" />
+	<AppHeader subtitle="Choose a grammar topic to practice" isTitle />
 
 	<!-- Extra bottom padding so the floating Test button never covers the last card. -->
 	<main class="mx-auto max-w-md px-4 pb-32 sm:max-w-2xl md:max-w-4xl lg:max-w-5xl">
+
 		<!-- Shown only when this browser can install the app and it isn't installed yet. -->
 		<section
 			id="install-card"
@@ -21,7 +22,7 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 			class="mb-6 rounded-3xl border border-indigo-200 bg-indigo-50 p-5"
 		>
 			<div class="flex items-center gap-4">
-				<img src="/icons/icon-192.png" alt="" width="48" height="48" class="rounded-xl" />
+				<img src="/android-chrome-192x192.png" alt="" width="48" height="48" class="rounded-xl" />
 				<div class="min-w-0 flex-1">
 					<h2 class="font-bold text-slate-800">Install Grammar Master</h2>
 					<p class="text-sm text-slate-600">Open it from your home screen like an app, even offline.</p>
@@ -40,6 +41,14 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 				<Share className="mx-0.5 inline size-4 align-text-bottom text-indigo-600" aria-label="Share" />
 				<strong>Share</strong> in the browser bar, then choose <strong>Add to Home Screen</strong>.
 			</p>
+			<button
+				id="install-dismiss"
+				type="button"
+				hidden
+				class="mt-3 text-sm font-semibold text-indigo-600 hover:underline"
+			>
+				Already installed? Don't show this again
+			</button>
 		</section>
 
 		{
@@ -82,11 +91,7 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 		class="fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-20 flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-indigo-300 transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-300"
 	>
 		<BookCheck />
-		<span
-			id="test-score"
-			hidden
-			class="rounded-full bg-white/20 px-2.5 py-0.5 text-sm font-semibold"
-			title="Tests passed"></span>
+		<span class="sr-only">Take a test</span>
 	</a>
 </BaseLayout>
 
@@ -96,12 +101,20 @@ const exerciseCount = (t: (typeof topics)[number]) =>
 
 	setupInstallCard();
 
-	// The score lives in this browser's storage, so it's filled in on the client.
-	const badge = document.getElementById("test-score");
-	const { passed } = loadTestStats();
-	if (badge && passed > 0) {
-		badge.textContent = `★ ${passed}`;
-		badge.setAttribute("aria-label", `${passed} tests passed`);
-		badge.hidden = false;
+	// The stats live in this browser's storage, so they're filled in on the client.
+	const { passed, completed } = loadTestStats();
+
+	const progress = document.getElementById("test-progress");
+	const progressCount = document.getElementById("test-progress-count");
+	const progressTitle = document.getElementById("test-progress-title");
+	const progressText = document.getElementById("test-progress-text");
+	if (progress && progressCount && progressTitle && progressText) {
+		progressCount.textContent = String(completed);
+		progressTitle.textContent = completed === 1 ? "Test completed" : "Tests completed";
+		progressText.textContent =
+			completed === 0
+				? "Take your first 12-exercise test and start your streak!"
+				: `${passed} passed so far. Every test you finish counts. Go for one more!`;
+		progress.hidden = false;
 	}
 </script>

@@ -32,7 +32,7 @@ export default function pwa() {
 				const root = fileURLToPath(dir);
 				const files = (await listFiles(root))
 					.map((f) => relative(root, f))
-					.filter((f) => !SKIP.has(f) && !f.split(sep).pop().startsWith("."))
+					.filter((f) => !SKIP.has(f) && !f.split(sep).pop().startsWith(".") && !f.endsWith(".zip"))
 					.sort();
 
 				const hash = createHash("sha256");
